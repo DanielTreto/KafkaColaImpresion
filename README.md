@@ -35,7 +35,13 @@ El sistema sigue una arquitectura de Productores y Consumidores desacoplados par
 *   Maven.
 *   Apache Kafka.
 
-### Paso 1: Inicialización del Entorno (Manual)
+### Paso 1: Obtención del Código
+1.  **Clonar el Repositorio**:
+    ```powershell
+    git clone https://github.com/DanielTreto/KafkaColaImpresion.git
+    ```
+
+### Paso 2: Inicialización del Entorno (Manual)
 
 Siga estos pasos desde powershell, en la carpeta \bin\windows de kafka para configurar el servidor:
 
@@ -68,8 +74,8 @@ Siga estos pasos desde powershell, en la carpeta \bin\windows de kafka para conf
         .\kafka-topics.bat --create --topic print-docs-color --partitions 2 --bootstrap-server localhost:9092
         ```
 
-### Paso 2: Ejecución de Componentes
-Ejecutar las siguientes clases Java (desde Eclipse o Terminal) en este orden:
+### Paso 3: Ejecución de Componentes
+Ejecutar las siguientes clases Java del proyecto clonado (desde Eclipse o Terminal) en este orden:
 
 1.  **`ArchivadorDocumentos`**: Inicia el servicio de backup (`docs_archivados`).
 2.  **`TransformadorDocumentos`**: Inicia el servicio de routing y paginación.
