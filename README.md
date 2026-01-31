@@ -37,18 +37,18 @@ El sistema sigue una arquitectura de Productores y Consumidores desacoplados par
 
 ### Paso 1: Inicialización del Entorno (Manual)
 
-Siga estos pasos desde la terminal de windows, en la carpeta de kafka para configurar el servidor:
+Siga estos pasos desde powershell, en la carpeta \bin\windows de kafka para configurar el servidor:
 
 1.  **Formatear el Almacenamiento**:
     Generar un ID de cluster y formatear los directorios de logs.
     ```powershell
-    $ID = .\bin\windows\kafka-storage.bat random-uuid
-    .\bin\windows\kafka-storage.bat format -t $ID -c .\config\kraft\server.properties
+    .\kafka-storage.bat random-uuid
+    .\kafka-storage.bat format --standalone -t "ID generado en el paso anterior" -c ..\..\config\server.properties
     ```
 
 2.  **Iniciar el Servidor Kafka**:
     ```powershell
-    .\bin\windows\kafka-server-start.bat .\config\kraft\server.properties
+    .\kafka-server-start.bat ..\..\config\server.properties
     ```
     *(Mantener esta ventana abierta)*.
 
@@ -57,15 +57,15 @@ Siga estos pasos desde la terminal de windows, en la carpeta de kafka para confi
     
     *   **Entrada de Trabajos** (1 Partición):
         ```powershell
-        .\bin\windows\kafka-topics.bat --create --topic print-jobs-incoming --partitions 1 --bootstrap-server localhost:9092
+        .\kafka-topics.bat --create --topic print-jobs-incoming --partitions 1 --bootstrap-server localhost:9092
         ```
     *   **Cola B/N** (3 Particiones = 3 Impresoras):
         ```powershell
-        .\bin\windows\kafka-topics.bat --create --topic print-docs-bn --partitions 3 --bootstrap-server localhost:9092
+        .\kafka-topics.bat --create --topic print-docs-bn --partitions 3 --bootstrap-server localhost:9092
         ```
     *   **Cola Color** (2 Particiones = 2 Impresoras):
         ```powershell
-        .\bin\windows\kafka-topics.bat --create --topic print-docs-color --partitions 2 --bootstrap-server localhost:9092
+        .\kafka-topics.bat --create --topic print-docs-color --partitions 2 --bootstrap-server localhost:9092
         ```
 
 ### Paso 2: Ejecución de Componentes
@@ -93,11 +93,7 @@ Si se necesita reiniciar el entorno completamente (borrar colas y logs corruptos
 1.  Detener el servidor Kafka (Ctrl+C).
 2.  Borrar la carpeta de logs temporales:
     ```powershell
-    rmdir /s /q C:\tmp\kraft-combined-logs
+    Remove-Item -Recurse -Force C:\tmp\kraft-combined-logs
     ```
-3.  Borrar las carpetas de salida:
-    ```powershell
-    rmdir /s /q docs_archivados
-    rmdir /s /q docs_imprimidos
-    ```
+3.  Borrar las carpetas de salida en el proyecto de Maven
 4.  Repetir el **Paso 1** (Formatear y Arrancar).

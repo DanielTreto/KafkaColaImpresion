@@ -55,7 +55,7 @@ public class Impresora implements Runnable {
 
         try {
             while (true) {
-                // Sondeo de nuevos mensajes cada 250ms
+                // Sondeo de nuevos mensajes cada cierto tiempo
                 ConsumerRecords<String, String> registros = consumidor.poll(Duration.ofMillis(TIEMPO_SONDEO_MS));
                 for (ConsumerRecord<String, String> registro : registros) {
                     try {

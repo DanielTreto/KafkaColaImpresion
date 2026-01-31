@@ -22,11 +22,11 @@ import org.apache.kafka.common.serialization.StringSerializer;
  */
 public class TransformadorDocumentos {
 
-    private static final String SERVER = "127.0.0.1:9092";
-    private static final String T_INCOMING = "print-jobs-incoming";
-    private static final String T_BW = "print-docs-bn";
-    private static final String T_COLOR = "print-docs-color";
-    private static final String GROUP_ID = "transformador-group"; 
+    private static final String SERVIDOR_KAFKA = "127.0.0.1:9092";
+    private static final String TEMA_ENTRADA = "print-jobs-incoming";
+    private static final String TEMA_BN = "print-docs-bn";
+    private static final String TEMA_COLOR = "print-docs-color";
+    private static final String ID_GRUPO = "transformador-group"; 
     
     // Constantes de configuración
     private static final int TIEMPO_SONDEO_MS = 500;
@@ -43,22 +43,22 @@ public class TransformadorDocumentos {
     public static void main(String[] args) {
         // Configuración del Consumidor (Entrada)
         Properties propsConsumidor = new Properties();
-        propsConsumidor.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVER);
+        propsConsumidor.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVIDOR_KAFKA);
         propsConsumidor.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         propsConsumidor.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        propsConsumidor.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
+        propsConsumidor.put(ConsumerConfig.GROUP_ID_CONFIG, ID_GRUPO);
         propsConsumidor.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         // Configuración del Productor (Salida transformanda)
         Properties propsProductor = new Properties();
-        propsProductor.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVER);
+        propsProductor.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVIDOR_KAFKA);
         propsProductor.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         propsProductor.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         KafkaConsumer<String, String> consumidor = new KafkaConsumer<>(propsConsumidor);
         KafkaProducer<String, String> productor = new KafkaProducer<>(propsProductor);
 
-        consumidor.subscribe(Collections.singleton(T_INCOMING));
+        consumidor.subscribe(Collections.singleton(TEMA_ENTRADA));
         System.out.println("===== TRANSFORMADOR DE DOCUMENTOS INICIADO =====");
 
         try {
@@ -89,9 +89,9 @@ public class TransformadorDocumentos {
         TrabajoImpresion trabajo = TrabajoImpresion.fromJson(jsonBruto);
         
         // Determinar cola de salida
-        String colaDestino = T_BW;
+        String colaDestino = TEMA_BN;
         if ("Color".equalsIgnoreCase(trabajo.getTipo())) {
-            colaDestino = T_COLOR;
+            colaDestino = TEMA_COLOR;
         }
 
         String textoCompleto = trabajo.getDocumento();
