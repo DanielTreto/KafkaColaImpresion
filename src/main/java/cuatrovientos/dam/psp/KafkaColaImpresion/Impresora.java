@@ -20,6 +20,7 @@ public class Impresora implements Runnable {
     private String nombre;
     private static final String SERVER = "127.0.0.1:9092";
     
+    // Constantes de configuración
     private static final int TIEMPO_SONDEO_MS = 250;
     private static final int RETARDO_BASE_MS = 10000;
     private static final int RETARDO_ALEATORIO_MS = 5000;
@@ -35,9 +36,11 @@ public class Impresora implements Runnable {
     @Override
     public void run() {
         this.tiempoInicio = System.currentTimeMillis();
+        // Determina el topic y el grupo de consumo según el tipo de impresora
         String topic = "Color".equals(tipo) ? "print-docs-color" : "print-docs-bn";
         String group = "Color".equals(tipo) ? "gestor-color" : "gestor-bn";
 
+        // Configuración del consumidor de Kafka
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, SERVER);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -52,15 +55,19 @@ public class Impresora implements Runnable {
 
         try {
             while (true) {
+                // Sondeo de nuevos mensajes cada 250ms
                 ConsumerRecords<String, String> registros = consumidor.poll(Duration.ofMillis(TIEMPO_SONDEO_MS));
                 for (ConsumerRecord<String, String> registro : registros) {
                     try {
+                        // Extrae la cabecera del mensaje para el log
                         String[] partes = registro.value().split("\n");
                         String info = (partes.length >= 2) ? partes[0] + " | " + partes[1] : "N/A";
                         
+                        // Simula el tiempo de calentamiento/preparación
                         log("Imprimiendo " + info);
                         Thread.sleep(RETARDO_BASE_MS + random.nextInt(RETARDO_ALEATORIO_MS));
 
+                        // Realiza la "impresión" (guardado en fichero)
                         imprimir(registro.value());
                     } catch (Exception e) {
                         log("Error: " + e.getMessage());
@@ -72,6 +79,9 @@ public class Impresora implements Runnable {
         }
     }
 
+    /**
+     * Simula la impresión guardando el contenido en un archivo de texto.
+     */
     private void imprimir(String contenido) throws IOException {
         String dirBase = "docs_imprimidos/" + tipo + "/" + nombre; 
         File directorio = new File(dirBase);
@@ -86,6 +96,9 @@ public class Impresora implements Runnable {
         }
     }
 
+    /**
+     * Método auxiliar para logs con marca de tiempo de actividad.
+     */
     private void log(String mensaje) {
         long tiempoActivo = System.currentTimeMillis() - tiempoInicio;
         System.out.println("[" + nombre + "] [" + tiempoActivo + "ms] " + mensaje);
