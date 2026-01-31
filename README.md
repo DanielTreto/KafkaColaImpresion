@@ -18,7 +18,7 @@ El sistema sigue una arquitectura de Productores y Consumidores desacoplados par
     *   **Transformación (`TransformadorDocumentos`)**:
         *   Deserializa el trabajo y divide el texto en páginas de máximo 400 caracteres.
         *   Enruta cada página a la cola de impresión correspondiente (`print-docs-bn` o `print-docs-color`) según el tipo.
-        *   Utiliza el Título del documento como clave de particionado para garantizar el orden.
+        *   Utiliza el remitente del documento como clave de particionado para garantizar el orden.
 
 3.  **Impresión (`GestorImpresoras`)**:
     *   Gestiona un pool de hilos (`Impresora.java`) que simulan dispositivos físicos.
@@ -87,13 +87,24 @@ Ejecutar las siguientes clases Java (desde Eclipse o Terminal) en este orden:
 | `print-docs-bn` | 3 | Cola de documentos paginados B/N. 1 Partición por Impresora BN. |
 | `print-docs-color` | 2 | Cola de documentos paginados Color. 1 Partición por Impresora Color. |
 
-### Limpieza y Reinicio
+### Limpieza Rápida de Topics
+Si solo se desea borrar el contenido de los topics sin afectar el resto de la configuración (soft reset):
+
+```powershell
+.\kafka-topics.bat --delete --topic print-jobs-incoming --bootstrap-server localhost:9092
+.\kafka-topics.bat --delete --topic print-docs-bn --bootstrap-server localhost:9092
+.\kafka-topics.bat --delete --topic print-docs-color --bootstrap-server localhost:9092
+```
+*Luego debe recrear los topics como se indica en "Crear Topics".*
+
+### Reinicio Completo y Limpieza
 Si se necesita reiniciar el entorno completamente (borrar colas y logs corruptos):
 
-1.  Detener el servidor Kafka (Ctrl+C).
-2.  Borrar la carpeta de logs temporales:
+1.  Con el servidor encendido hacer un soft reset de los topics
+2.  Detener el servidor Kafka (Ctrl+C).
+3.  Borrar la carpeta de logs temporales:
     ```powershell
     Remove-Item -Recurse -Force C:\tmp\kraft-combined-logs
     ```
-3.  Borrar las carpetas de salida en el proyecto de Maven
-4.  Repetir el **Paso 1** (Formatear y Arrancar).
+4.  Borrar las carpetas de salida en el proyecto de Maven
+5.  Repetir el **Paso 1** (Formatear y Arrancar).

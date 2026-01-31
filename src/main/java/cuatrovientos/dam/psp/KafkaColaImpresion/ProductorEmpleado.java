@@ -40,6 +40,16 @@ public class ProductorEmpleado {
             enviarTrabajo(productor, "Manual de Usuario", generarInformeSimulado(LONG_MANUAL), "Color", "Lucia Martinez");
             enviarTrabajo(productor, "Acta Reunion", "Texto corto para probar caso simple.", "B/N", "Pedro Gomez");
 
+            // Nuevos casos de prueba para verificar afinidad de SENDER
+            System.out.println("--- ENVIANDO LOTE DE PRUEBA DE MIGUEL ---");
+            enviarTrabajo(productor, "Doc Miguel 1", generarInformeSimulado(800), "B/N", "Miguel Goyena");
+            enviarTrabajo(productor, "Doc Miguel 2", generarInformeSimulado(800), "B/N", "Miguel Goyena");
+            enviarTrabajo(productor, "Doc Miguel 3", generarInformeSimulado(800), "B/N", "Miguel Goyena");
+
+            System.out.println("--- ENVIANDO LOTE DE PRUEBA DE LUCIA ---");
+            enviarTrabajo(productor, "Diseño Lucia 1", generarInformeSimulado(600), "Color", "Lucia Martinez");
+            enviarTrabajo(productor, "Diseño Lucia 2", generarInformeSimulado(600), "Color", "Lucia Martinez");
+
             System.out.println("Trabajos enviados con éxito");
         } catch (Exception e) {
             e.printStackTrace();

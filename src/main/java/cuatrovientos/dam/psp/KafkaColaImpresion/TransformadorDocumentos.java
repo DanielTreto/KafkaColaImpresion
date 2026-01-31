@@ -116,7 +116,7 @@ public class TransformadorDocumentos {
                          "PAG: " + (i + 1) + " DE " + numPaginas + "\n" +
                          "CONTENIDO:\n" + contenidoPagina;
             
-            productor.send(new ProducerRecord<>(colaDestino, trabajo.getTitulo(), mensaje));
+            productor.send(new ProducerRecord<>(colaDestino, trabajo.getSender(), mensaje));
         }
     }
 
